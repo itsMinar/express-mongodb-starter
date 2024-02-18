@@ -1,12 +1,14 @@
 {
   "name": "express-mongodb-starter",
   "version": "1.0.0",
-  "description": "This is a Starter template for Express with MongoDB",
+  "description": "This is a Starter template for Expressjs with MongoDB",
   "main": "index.js",
   "keywords": [
     "javascript",
+    "nodejs",
     "expressjs",
-    "mongodb"
+    "mongodb",
+    "mongoose"
   ],
   "author": "Md. Minar Munshi",
   "license": "ISC",
@@ -19,7 +21,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.4",
     "express": "^4.18.2",
-    "mongoose": "^8.1.2"
+    "mongoose": "^8.1.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.3",
