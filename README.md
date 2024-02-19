@@ -29,3 +29,27 @@ npm run dev
 ```
 
 7. Access the APIs at the specified endpoints.
+
+## 💻 Deploy on Vercel for Free
+
+### To Deploy this app for free on Vercel, follow these steps:
+
+1. Create `vercel.json` file in the root folder and copy paste the content given bellow:
+
+```bash
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/index.js"
+    }
+  ]
+}
+```
