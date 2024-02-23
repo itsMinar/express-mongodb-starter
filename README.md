@@ -15,8 +15,19 @@ git clone https://github.com/itsMinar/express-mongodb-starter.git
 ```
 
 3. Navigate to the project directory.
-4. Create `.env` file in the root folder and copy paste the content of `.env.sample`, and add necessary credentials.
-5. Install the packages:
+
+4. Remove the git initialization (.git) file (don't use powershell) -
+   ```sh
+   rm -rf .git*
+   ```
+5. Check is there any updated dependencies available -
+
+   ```sh
+   npx npm-check-updates -u
+   ```
+
+6. Create `.env` file in the root folder and copy paste the content of `.env.sample`, and add necessary credentials.
+7. Install the packages:
 
 ```bash
 npm install
