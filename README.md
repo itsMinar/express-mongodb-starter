@@ -10,36 +10,36 @@ To Use this Starter Template locally, follow these steps:
 
 2. Clone the project repository:
 
-```bash
-git clone https://github.com/itsMinar/express-mongodb-starter.git
-```
+   ```bash
+   git clone https://github.com/itsMinar/express-mongodb-starter.git
+   ```
 
 3. Navigate to the project directory.
 
+   ```bash
+   cd express-mongodb-starter
+   ```
+
 4. Remove the git initialization (.git) file (don't use powershell) -
+
    ```sh
    rm -rf .git*
    ```
-5. Check is there any updated dependencies available -
 
-   ```sh
-   npx npm-check-updates -u
+5. #### Create `.env` file in the root folder and copy paste the content of `.env.sample`, and add necessary credentials.
+6. Install the packages:
+
+   ```bash
+   npm install
    ```
 
-6. Create `.env` file in the root folder and copy paste the content of `.env.sample`, and add necessary credentials.
-7. Install the packages:
+7. Run the project (Development):
 
-```bash
-npm install
-```
+   ```bash
+   npm run dev
+   ```
 
-6. Run the project (Development):
-
-```bash
-npm run dev
-```
-
-7. Access the APIs at the specified endpoints.
+8. Access the APIs at the specified endpoints.
 
 ## 💻 Deploy on Vercel for Free
 
