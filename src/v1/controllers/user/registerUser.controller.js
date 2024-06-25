@@ -1,9 +1,8 @@
-const { ApiError } = require('../../utils/ApiError.js');
-const { ApiResponse } = require('../../utils/ApiResponse.js');
-const { asyncHandler } = require('../../utils/asyncHandler.js');
-const { User } = require('../models/user.models.js');
+const { ApiError } = require('../../../utils/ApiError.js');
+const { ApiResponse } = require('../../../utils/ApiResponse.js');
+const { asyncHandler } = require('../../../utils/asyncHandler.js');
+const { User } = require('../../models/user.models.js');
 
-// User Register Controller
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
   const { fullName, email, password } = req.body;
@@ -41,21 +40,4 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, createdUser, 'User Registered Successfully'));
 });
 
-// Get All Users Controller
-const getAllUser = asyncHandler(async (req, res) => {
-  try {
-    const users = await User.find();
-
-    // return response
-    return res
-      .status(200)
-      .json(new ApiResponse(200, users, 'All Users Info Fetched Successfully'));
-  } catch (error) {
-    throw new ApiError(500, 'Something went wrong while registering the user');
-  }
-});
-
-module.exports = {
-  registerUser,
-  getAllUser,
-};
+module.exports = registerUser;
