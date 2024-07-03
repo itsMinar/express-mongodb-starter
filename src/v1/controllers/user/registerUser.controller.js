@@ -4,7 +4,7 @@ const { asyncHandler } = require('../../../utils/asyncHandler.js');
 const { User } = require('../../models/user.models.js');
 
 const registerUser = asyncHandler(async (req, res) => {
-  // get user details from frontend
+  // get user details from client
   const { fullName, email, password } = req.body;
 
   // validation - not empty
@@ -35,9 +35,14 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // return response
-  return res
-    .status(201)
-    .json(new ApiResponse(201, createdUser, 'User Registered Successfully'));
+  return res.status(201).json(
+    new ApiResponse(201, createdUser, 'User Registered Successfully', {
+      links: {
+        self: req.url,
+        login: '/users/login',
+      },
+    })
+  );
 });
 
 module.exports = registerUser;
