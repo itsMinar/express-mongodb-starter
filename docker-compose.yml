@@ -33,14 +33,12 @@ services:
     build: .
     container_name: express-app
     restart: always
-    environment:
-      MONGODB_URI: mongodb://testuser:testpassword@mongodb:27017
-      CORS_ORIGIN: '*'
-      PORT: 8000
     ports:
       - 8000:8000
     depends_on:
       - mongodb
+    env_file:
+      - .env
 
 volumes:
   my_mongodb_data:
