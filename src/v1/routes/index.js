@@ -3,8 +3,8 @@ const healthCheckRouter = require('./healthcheck.routes.js');
 const userRouter = require('./user.routes.js');
 
 // healthCheck Route
-router.use(healthCheckRouter);
+router.use('/health-check', healthCheckRouter);
 // User Route
-router.use(userRouter);
+router.use('/users', userRouter);
 
 module.exports = router;

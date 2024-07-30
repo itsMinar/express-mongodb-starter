@@ -18,9 +18,18 @@ app.use(express.static('public'));
 app.use(cookieParser());
 
 // routes import
-const routesV1 = require('./v1/routes/index.js');
+const routesV1 = require('../v1/routes/index.js');
 
 // routes declaration
 app.use('/api/v1', routesV1);
+
+// Not Found Handler
+app.use((_req, res) => {
+  res.status(404).json({
+    message: 'Resource Not Found',
+    error: 'The requested resource does not exist',
+    hints: 'Please check the URL and try again',
+  });
+});
 
 module.exports = { app };
