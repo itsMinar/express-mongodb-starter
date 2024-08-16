@@ -2,9 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const CustomError = require('../utils/Error.js');
+const errorMiddleware = require('../middlewares/error.middleware.js');
 
+// initialize express app
 const app = express();
 
+// middlewares
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
@@ -23,13 +27,27 @@ const routesV1 = require('../v1/routes/index.js');
 // routes declaration
 app.use('/api/v1', routesV1);
 
-// Not Found Handler
-app.use((_req, res) => {
-  res.status(404).json({
-    message: 'Resource Not Found',
-    error: 'The requested resource does not exist',
-    hints: 'Please check the URL and try again',
+// health check
+app.get('/health', (_req, res) => {
+  res.status(200).json({
+    success: true,
+    message: '🚀 Catalog Service is up and running',
   });
 });
 
-module.exports = { app };
+// Not Found Handler
+app.use((_req, res) => {
+  const error = CustomError.notFound({
+    message: 'Resource Not Found',
+    errors: ['The requested resource does not exist'],
+    hints: 'Please check the URL and try again',
+  });
+
+  res.status(error.status).json({ ...error, status: undefined });
+});
+
+// Global Error Handler
+app.use(errorMiddleware);
+
+// export the app
+module.exports = app;

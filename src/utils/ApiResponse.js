@@ -1,12 +1,9 @@
 class ApiResponse {
-  constructor(statusCode, data, message = 'Success', extraProperties = {}) {
+  constructor(statusCode, data, message = 'Success') {
     this.statusCode = statusCode;
     this.data = data;
     this.message = message;
     this.success = statusCode < 400;
-
-    // Assign any additional properties
-    Object.assign(this, extraProperties);
   }
 }
 
