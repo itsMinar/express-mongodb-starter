@@ -20,13 +20,13 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "mongoose": "^8.5.3",
+    "express": "^4.21.0",
+    "mongoose": "^8.7.0",
     "morgan": "^1.10.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4",
+    "nodemon": "^3.1.7",
     "prettier": "^3.3.3"
   }
 }
