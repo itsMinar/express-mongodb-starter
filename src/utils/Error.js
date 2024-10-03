@@ -3,23 +3,23 @@ const formatError = (err) => {
     message: err?.message ? err.message : err.toString(),
     errors: err.errors || [],
     hints: err.hints
-      ? `${err.hints}. If the problem is not resolved, please feel free to contact our technical team with the trace_id`
-      : 'Please Create a support ticket with the trace_id for further assistance. or contact our technical team with the trace_id',
+      ? `${err.hints}. If the problem is not resolved, please feel free to contact our technical team.`
+      : 'Please contact our technical team.',
   };
 
   return error;
 };
 
 class CustomError {
-  static notFound(error) {
+  static badRequest(error) {
     const err = formatError(error);
     return {
-      status: 404,
+      status: 400,
       ...err,
     };
   }
 
-  static unauthorized(error) {
+  static unauthenticated(error) {
     const err = formatError(error);
     return {
       status: 401,
@@ -27,10 +27,18 @@ class CustomError {
     };
   }
 
-  static badRequest(error) {
+  static unauthorized(error) {
     const err = formatError(error);
     return {
-      status: 400,
+      status: 403,
+      ...err,
+    };
+  }
+
+  static notFound(error) {
+    const err = formatError(error);
+    return {
+      status: 404,
       ...err,
     };
   }
