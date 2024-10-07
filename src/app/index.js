@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const morganMiddleware = require('../logger/morgan.logger.js');
 const CustomError = require('../utils/Error.js');
 const errorMiddleware = require('../middlewares/error.middleware.js');
 
@@ -15,25 +15,27 @@ app.use(
     credentials: true,
   })
 );
-app.use(morgan('dev'));
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(express.static('public'));
 app.use(cookieParser());
+
+// logger middleware
+app.use(morganMiddleware);
+
+// health check
+app.get('/health', (_req, res) => {
+  res.status(200).json({
+    success: true,
+    message: '🚀 Server is up and running',
+  });
+});
 
 // routes import
 const routesV1 = require('../v1/routes/index.js');
 
 // routes declaration
 app.use('/api/v1', routesV1);
-
-// health check
-app.get('/health', (_req, res) => {
-  res.status(200).json({
-    success: true,
-    message: '🚀 Catalog Service is up and running',
-  });
-});
 
 // Not Found Handler
 app.use((_req, res) => {
