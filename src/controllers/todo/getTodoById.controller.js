@@ -1,8 +1,8 @@
 const { isValidObjectId } = require('mongoose');
-const { asyncHandler } = require('../../../utils/asyncHandler.js');
-const { ApiResponse } = require('../../../utils/ApiResponse.js');
-const { Todo } = require('../../models/todo.models.js');
-const CustomError = require('../../../utils/Error.js');
+const { asyncHandler } = require('../../utils/asyncHandler.js');
+const { ApiResponse } = require('../../utils/ApiResponse.js');
+const { Todo } = require('../../models/todo.model.js');
+const CustomError = require('../../utils/Error.js');
 
 const getTodoById = asyncHandler(async (req, res, next) => {
   const { todoId } = req.params;

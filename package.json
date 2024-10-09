@@ -14,7 +14,8 @@
   "license": "ISC",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "db:seed": "node src/db/seeder.js"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",

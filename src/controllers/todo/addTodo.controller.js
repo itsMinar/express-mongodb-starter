@@ -1,8 +1,8 @@
 const { z } = require('zod');
-const { asyncHandler } = require('../../../utils/asyncHandler.js');
-const { ApiResponse } = require('../../../utils/ApiResponse.js');
-const { Todo } = require('../../models/todo.models.js');
-const CustomError = require('../../../utils/Error.js');
+const { asyncHandler } = require('../../utils/asyncHandler');
+const CustomError = require('../../utils/Error');
+const { Todo } = require('../../models/todo.model');
+const { ApiResponse } = require('../../utils/ApiResponse');
 
 const addTodo = asyncHandler(async (req, res, next) => {
   const schema = z.object({

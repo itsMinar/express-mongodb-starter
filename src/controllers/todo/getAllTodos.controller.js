@@ -1,6 +1,6 @@
-const { asyncHandler } = require('../../../utils/asyncHandler.js');
-const { ApiResponse } = require('../../../utils/ApiResponse.js');
-const { Todo } = require('../../models/todo.models.js');
+const { asyncHandler } = require('../../utils/asyncHandler.js');
+const { ApiResponse } = require('../../utils/ApiResponse.js');
+const { Todo } = require('../../models/todo.model.js');
 
 const getAllTodos = asyncHandler(async (req, res, next) => {
   const todos = await Todo.find();

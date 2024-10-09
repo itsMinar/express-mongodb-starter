@@ -8,7 +8,7 @@ const errorMiddleware = require('../middlewares/error.middleware.js');
 // initialize express app
 const app = express();
 
-// middlewares
+// add middlewares to the app
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
@@ -32,10 +32,10 @@ app.get('/health', (_req, res) => {
 });
 
 // routes import
-const routesV1 = require('../v1/routes/index.js');
+const todoRouter = require('../routes/todo.routes.js');
 
 // routes declaration
-app.use('/api/v1', routesV1);
+app.use('/api/v1/todos', todoRouter);
 
 // Not Found Handler
 app.use((_req, res) => {
