@@ -1,9 +1,9 @@
 const { isValidObjectId } = require('mongoose');
-const { z } = require('zod');
 const { asyncHandler } = require('../../utils/asyncHandler.js');
 const { ApiResponse } = require('../../utils/ApiResponse.js');
 const { Todo } = require('../../models/todo.model.js');
 const CustomError = require('../../utils/Error.js');
+const { updateTodoSchema } = require('../../schemas/todo.schemas.js');
 
 const updateTodoById = asyncHandler(async (req, res, next) => {
   const { todoId } = req.params;
@@ -18,21 +18,12 @@ const updateTodoById = asyncHandler(async (req, res, next) => {
     return next(error);
   }
 
-  const schema = z.object({
-    _id: z.string({ message: 'Todo ID is Required' }),
-    title: z
-      .string({ message: 'Title is required' })
-      .min(2, 'Title must be at least 2 characters')
-      .optional(),
-    isComplete: z.boolean().optional(),
-  });
+  const parsedBody = updateTodoSchema.safeParse(req.body);
 
-  const validation = schema.safeParse({ _id: todoId, ...req.body });
-
-  if (!validation.success) {
+  if (!parsedBody.success) {
     const error = CustomError.badRequest({
       message: 'Validation Error',
-      errors: validation.error.errors.map((err) => err.message),
+      errors: parsedBody.error.errors.map((err) => err.message),
       hints: 'Please provide all the required fields',
     });
 
@@ -40,9 +31,9 @@ const updateTodoById = asyncHandler(async (req, res, next) => {
   }
 
   const updatedTodo = await Todo.findByIdAndUpdate(
-    validation.data._id,
+    todoId,
     {
-      ...validation.data,
+      ...parsedBody.data,
     },
     { new: true }
   );

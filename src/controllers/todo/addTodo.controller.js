@@ -1,23 +1,16 @@
-const { z } = require('zod');
 const { asyncHandler } = require('../../utils/asyncHandler');
 const CustomError = require('../../utils/Error');
 const { Todo } = require('../../models/todo.model');
 const { ApiResponse } = require('../../utils/ApiResponse');
+const { addTodoSchema } = require('../../schemas/todo.schemas');
 
 const addTodo = asyncHandler(async (req, res, next) => {
-  const schema = z.object({
-    title: z
-      .string({ message: 'Title is required' })
-      .min(2, 'Title must be at least 2 characters'),
-    isComplete: z.boolean().optional(),
-  });
+  const parsedBody = addTodoSchema.safeParse(req.body);
 
-  const validation = schema.safeParse(req.body);
-
-  if (!validation.success) {
+  if (!parsedBody.success) {
     const error = CustomError.badRequest({
       message: 'Validation Error',
-      errors: validation.error.errors.map((err) => err.message),
+      errors: parsedBody.error.errors.map((err) => err.message),
       hints: 'Please provide all the required fields',
     });
 
@@ -25,7 +18,7 @@ const addTodo = asyncHandler(async (req, res, next) => {
   }
 
   // create todo object - create entry in DB
-  const todo = await Todo.create(validation.data);
+  const todo = await Todo.create(parsedBody.data);
 
   // return response
   return res.status(201).json(
