@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const morganMiddleware = require('../logger/morgan.logger.js');
 const CustomError = require('../utils/Error.js');
 const errorMiddleware = require('../middlewares/error.middleware.js');
+const { CORS_ORIGIN } = require('../config/env.js');
 
 // initialize express app
 const app = express();
@@ -11,7 +12,7 @@ const app = express();
 // add middlewares to the app
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: CORS_ORIGIN,
     credentials: true,
   })
 );

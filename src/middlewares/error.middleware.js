@@ -1,14 +1,13 @@
 const { ZodError } = require('zod');
 const CustomError = require('../utils/Error');
 const logger = require('../logger/winston.logger');
+const { ENV } = require('../config/env');
 
 const errorMiddleware = (err, _req, res, _next) => {
   logger.error('Call the Error Middleware');
 
   const errorMessage =
-    process.env.NODE_ENV === 'development'
-      ? err.message
-      : 'Something went wrong!';
+    ENV === 'development' ? err.message : 'Something went wrong!';
 
   let error = {
     message: errorMessage,

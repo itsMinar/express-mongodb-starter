@@ -1,10 +1,9 @@
 require('dotenv').config();
 
 const app = require('./app');
+const { PORT } = require('./config/env');
 const connectDB = require('./db');
 const logger = require('./logger/winston.logger');
-
-const PORT = process.env.PORT || 4000;
 
 connectDB()
   .then(() => {

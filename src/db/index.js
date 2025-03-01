@@ -1,10 +1,11 @@
 const { connect } = require('mongoose');
 const { DB_NAME } = require('../constants/db');
 const logger = require('../logger/winston.logger');
+const { MONGODB_URI } = require('../config/env');
 
 const connectDB = async () => {
   try {
-    const connectionInstance = await connect(process.env.MONGODB_URI, {
+    const connectionInstance = await connect(MONGODB_URI, {
       dbName: DB_NAME,
     });
 
