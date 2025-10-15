@@ -1,13 +1,18 @@
+const { createServer } = require('http');
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const morganMiddleware = require('../logger/morgan.logger.js');
 const CustomError = require('../utils/Error.js');
+const { globalLimiter } = require('../middlewares/rateLimiter.middleware.js');
 const errorMiddleware = require('../middlewares/error.middleware.js');
 const { CORS_ORIGIN } = require('../config/env.js');
 
 // initialize express app
 const app = express();
+
+// create http server with express app
+const httpServer = createServer(app);
 
 // add middlewares to the app
 app.use(
@@ -23,6 +28,9 @@ app.use(cookieParser());
 
 // logger middleware
 app.use(morganMiddleware);
+
+// Rate limiting middleware
+app.use(globalLimiter);
 
 // health check
 app.get('/health', (_req, res) => {
@@ -52,5 +60,5 @@ app.use((_req, res) => {
 // Global Error Handler
 app.use(errorMiddleware);
 
-// export the app
-module.exports = app;
+// export the server
+module.exports = { httpServer };

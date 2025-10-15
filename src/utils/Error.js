@@ -51,6 +51,14 @@ class CustomError {
     };
   }
 
+  static tooManyRequest(error) {
+    const err = formatError(error);
+    return {
+      status: 429,
+      ...err,
+    };
+  }
+
   static serverError(error) {
     const err = formatError(error);
     return {
