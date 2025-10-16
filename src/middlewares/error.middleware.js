@@ -3,37 +3,46 @@ const CustomError = require('../utils/Error');
 const logger = require('../logger/winston.logger');
 const { ENV } = require('../config/env');
 
+const buildValidationError = (zodError) =>
+  CustomError.badRequest({
+    message: 'Validation Error',
+    errors: zodError.issues.map((issue) => issue.message),
+    hints: 'Please review the request payload and try again.',
+  });
+
 const errorMiddleware = (err, _req, res, _next) => {
-  logger.error('Call the Error Middleware');
+  const isZodError = err instanceof ZodError;
+  const isCustomError = err instanceof CustomError;
 
-  const errorMessage =
-    ENV === 'development' ? err.message : 'Something went wrong!';
+  if (isZodError) {
+    const validationError = buildValidationError(err);
+    logger.warn(validationError.message, { errors: validationError.errors });
 
-  let error = {
-    message: errorMessage,
-    errors:
-      Array.isArray(err.errors) && err.errors.length
-        ? err.errors
-        : ['Server Error!'],
-    hints: err.hints,
+    return res.status(validationError.status).json({
+      message: validationError.message,
+      errors: validationError.errors,
+      hints: validationError.hints,
+    });
+  }
+
+  const statusCode = isCustomError ? err.status : 500;
+
+  if (statusCode >= 500) {
+    logger.error(err.stack || err.message);
+  } else {
+    logger.warn(err.message);
+  }
+
+  const response = {
+    message:
+      isCustomError || ENV === 'development'
+        ? err.message
+        : 'Something went wrong!',
+    errors: isCustomError && err.errors.length ? err.errors : ['Server Error!'],
+    hints: isCustomError ? err.hints : 'Please contact our technical team.',
   };
 
-  // Check if the error is an instance of CustomError
-  if (err instanceof CustomError) {
-    error = {
-      ...error,
-    };
-  }
-
-  // Check if the error is an instance of ZodError
-  if (err instanceof ZodError) {
-    error = {
-      ...error,
-      // status: 422,
-    };
-  }
-
-  res.status(err.status || 500).json(error);
+  res.status(statusCode).json(response);
 };
 
 module.exports = errorMiddleware;

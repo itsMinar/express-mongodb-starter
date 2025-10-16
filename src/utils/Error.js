@@ -1,79 +1,61 @@
-const formatError = (err) => {
-  const error = {
-    message: err?.message ? err.message : err.toString(),
-    errors: err.errors || [],
-    hints: err.hints
-      ? `${err.hints}. If the problem is not resolved, please feel free to contact our technical team.`
-      : 'Please contact our technical team.',
-  };
+const appendSupportHint = (hints) => {
+  if (!hints) {
+    return 'Please contact our technical team.';
+  }
 
-  return error;
+  return `${hints}. If the problem is not resolved, please feel free to contact our technical team.`;
 };
 
-class CustomError {
-  static badRequest(error) {
-    const err = formatError(error);
-    return {
-      status: 400,
-      ...err,
-    };
+class CustomError extends Error {
+  constructor(status, message, { errors = [], hints } = {}) {
+    super(message);
+    this.name = this.constructor.name;
+    this.status = status;
+    this.errors = errors;
+    this.hints = appendSupportHint(hints);
+
+    Error.captureStackTrace(this, this.constructor);
   }
 
-  static unauthenticated(error) {
-    const err = formatError(error);
-    return {
-      status: 401,
-      ...err,
-    };
+  static #build(status, { message, errors, hints } = {}) {
+    const errorMessage = message || 'Unexpected error occurred.';
+
+    return new CustomError(status, errorMessage, {
+      errors: Array.isArray(errors) ? errors : [],
+      hints,
+    });
   }
 
-  static unauthorized(error) {
-    const err = formatError(error);
-    return {
-      status: 403,
-      ...err,
-    };
+  static badRequest(payload) {
+    return this.#build(400, payload);
   }
 
-  static notFound(error) {
-    const err = formatError(error);
-    return {
-      status: 404,
-      ...err,
-    };
+  static unauthenticated(payload) {
+    return this.#build(401, payload);
   }
 
-  static conflict(error) {
-    const err = formatError(error);
-    return {
-      status: 409,
-      ...err,
-    };
+  static unauthorized(payload) {
+    return this.#build(403, payload);
   }
 
-  static tooManyRequest(error) {
-    const err = formatError(error);
-    return {
-      status: 429,
-      ...err,
-    };
+  static forbidden(payload) {
+    return this.#build(403, payload);
   }
 
-  static serverError(error) {
-    const err = formatError(error);
-    return {
-      status: 500,
-      ...err,
-    };
+  static notFound(payload) {
+    return this.#build(404, payload);
   }
 
-  static throwError(error) {
-    const err = new Error(error.message);
-    err.status = error.status;
-    err.errors = error.errors;
-    err.hints = error.hints;
+  static conflict(payload) {
+    return this.#build(409, payload);
+  }
 
-    throw err;
+  static tooManyRequest(payload) {
+    return this.#build(429, payload);
+  }
+
+  static serverError(payload = {}) {
+    return this.#build(500, { message: 'Internal Server Error', ...payload });
   }
 }
 

@@ -1,40 +1,43 @@
 const { rateLimit } = require('express-rate-limit');
 const CustomError = require('../utils/Error');
 
+const formatRetryAfter = (retryAfterMs) => {
+  const minutes = Math.floor(retryAfterMs / 60000);
+  const seconds = Math.ceil((retryAfterMs % 60000) / 1000);
+
+  if (minutes < 1) {
+    return `${seconds} second${seconds !== 1 ? 's' : ''}`;
+  }
+
+  return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+};
+
+const respondWithLimitError = (res, { message, errors, hints, status }) =>
+  res.status(status).json({ message, errors, hints });
+
 const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
   handler: (req, res, _next, options) => {
-    // Calculate how long until the limit resets
     const retryAfterMs = req.rateLimit?.resetTime
       ? req.rateLimit.resetTime - Date.now()
       : options.windowMs;
 
-    // Convert to minutes or seconds based on remaining time
-    const retryAfterMinutes = Math.floor(retryAfterMs / 60000);
-    const retryAfterSeconds = Math.ceil((retryAfterMs % 60000) / 1000);
-
-    // Format human-readable time
-    let retryAfterStr;
-    if (retryAfterMinutes < 1) {
-      retryAfterStr = `${retryAfterSeconds} second${retryAfterSeconds !== 1 ? 's' : ''}`;
-    } else {
-      retryAfterStr = `${retryAfterMinutes} minute${retryAfterMinutes !== 1 ? 's' : ''}`;
-    }
+    const retryAfter = formatRetryAfter(Math.max(retryAfterMs, 0));
 
     const error = CustomError.tooManyRequest({
-      message: 'Too Many Request',
+      message: 'Too Many Requests',
       errors: [
-        `There are too many requests. You are only allowed ${
-          options.limit
-        } requests per ${options.windowMs / 60000} minutes. Please try again in ${retryAfterStr}.`,
+        `There are too many requests. You are only allowed ${options.limit} requests per ${
+          options.windowMs / 60000
+        } minutes. Please try again in ${retryAfter}.`,
       ],
       hints: 'Please try again later',
     });
 
-    return res.status(error.status).json({ ...error, status: undefined });
+    respondWithLimitError(res, error);
   },
 });
 
@@ -45,16 +48,16 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
   handler: (_req, res, _next, options) => {
     const error = CustomError.tooManyRequest({
-      message: 'Too Many Request',
+      message: 'Too Many Requests',
       errors: [
-        `There are too many requests. You are only allowed ${
-          options.limit
-        } requests per ${options.windowMs / 60000} minutes`,
+        `There are too many requests. You are only allowed ${options.limit} requests per ${
+          options.windowMs / 60000
+        } minutes.`,
       ],
-      hints: 'Please try again later',
+      hints: 'Please try again later.',
     });
 
-    return res.status(error.status).json({ ...error, status: undefined });
+    respondWithLimitError(res, error);
   },
 });
 
